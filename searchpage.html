@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    h1 {
+      margin-top: 20px;
+    }
+
+    input[type="text"] {
+      padding: 5px;
+    }
+
+    button {
+      padding: 5px 10px;
+    }
+
+    #blogContainer, #newsContainer, #youtubeContainer {
+      margin-top: 20px;
+      text-align: left;
+    }
+  </style>
+  <title>검색 페이지</title>
+</head>
+<body>
+<h1>Trend Now</h1>
+<input type="text" id="keyword" placeholder="키워드를 입력하세요">
+<button id="searchBtn">검색</button>
+<div id="blogContainer"></div>
+<div id="newsContainer"></div>
+<div id="youtubeContainer"></div>
+<script>
+    const searchBtn = document.getElementById('searchBtn');
+    const blogContainer = document.getElementById('blogContainer');
+    const newsContainer = document.getElementById('newsContainer');
+    const youtubeContainer = document.getElementById('youtubeContainer');
+
+
+    searchBtn.addEventListener('click', async () => {
+      blogContainer.innerHTML = '';
+
+      const keyword = document.getElementById('keyword').value;
+      if (!keyword) {
+        return;
+      }
+
+      try {
+        // 더미 데이터 대신 실제 네이버 검색 API를 사용해야 합니다.
+        const blogData = [
+          { title: '블로그 글 제목 1', link: 'https://example.com/blog1' },
+          { title: '블로그 글 제목 2', link: 'https://example.com/blog2' },
+          { title: '블로그 글 제목 3', link: 'https://example.com/blog3' }
+        ];
+
+        const blogList = document.createElement('ul');
+        blogData.slice(0, 3).forEach(item => {
+          const blogItem = document.createElement('li');
+          blogItem.innerHTML = `<a href="${item.link}" target="_blank">${item.title}</a>`;
+          blogList.appendChild(blogItem);
+        });
+        blogContainer.appendChild(blogList);
+      } catch (error) {
+        console.error('블로그 글을 불러오는 중 오류가 발생했습니다:', error);
+      }
+
+      try {
+        // 더미 데이터 대신 실제 뉴스 API를 사용해야 합니다.
+        const newsData = [
+          { title: '뉴스 제목 1', url: 'https://example.com/news1' },
+          { title: '뉴스 제목 2', url: 'https://example.com/news2' },
+          { title: '뉴스 제목 3', url: 'https://example.com/news3' }
+        ];
+
+        const newsList = document.createElement('ul');
+        newsData.slice(0, 3).forEach(article => {
+          const newsItem = document.createElement('li');
+          newsItem.innerHTML = `<a href="${article.url}" target="_blank">${article.title}</a>`;
+          newsList.appendChild(newsItem);
+        });
+        newsContainer.appendChild(newsList);
+      } catch (error) {
+        console.error('뉴스를 불러오는 중 오류가 발생했습니다:', error);
+      }
+
+       try {
+        // 더미 데이터 대신 실제 유튜브 API를 사용해야 합니다.
+        const youtubeData = [
+          { title: '유튜브 영상 제목 1', videoId: 'VIDEO_ID_1' },
+          { title: '유튜브 영상 제목 2', videoId: 'VIDEO_ID_2' },
+          { title: '유튜브 영상 제목 3', videoId: 'VIDEO_ID_3' }
+        ];
+
+        const videoList = document.createElement('ul');
+        youtubeData.forEach(item => {
+          const videoItem = document.createElement('li');
+          videoItem.innerHTML = `<a href="https://www.youtube.com/watch?v=${item.videoId}" target="_blank">${item.title}</a>`;
+          videoList.appendChild(videoItem);
+        });
+        youtubeContainer.appendChild(videoList);
+      } catch (error) {
+        console.error('영상을 불러오는 중 오류가 발생했습니다:', error);
+      }
+    });
+  </script>
+</body>
+</html>
