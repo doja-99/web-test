@@ -1,13 +1,76 @@
-<!DOCTYPE html> <!-- 이 페이지가 html로 만들어졌다는 포현 -->
-<html lang="ko"> <!-- 한글인식 -->
+<!DOCTYPE html>
+<html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>로그인페이지</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>시작페이지</title>
+    <style>
+        body {
+
+            text-align: center;
+            display: flex;
+            flex-direction: column; /* 요소들을 수직 방향으로 배치 */
+            justify-content: center; /* 수직 중앙 정렬 */
+            align-items: center; /* 가로 중앙 정렬 */
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            margin-bottom: 20px; /* 제목 아래 여백 추가 */
+        }
+
+       /* 커서 스타일 변경 */
+        #custom-login-btn img,
+        #trend-link {
+            cursor: pointer;
+        }
+         /* 비로그인 트렌드 찾기 링크 스타일 */
+        #trend-link {
+            position: absolute;
+            bottom: 1px; /* 원하는 위치로 조절 */
+            right: 1px; /* 원하는 위치로 조절 */
+        }
+    </style>
 </head>
 <body>
-  <h1>HTML 기록</h1>
-  <u>abcdefg</u>가나다라마바사 <br><br><br><br> 하느님이 보우하사 <p>우리나라만세</p>
-  <a href="https://itemscout.io/">아이템 스카우트 바로가기</a>
+<h1> Trend Now </h1>
 
+<div id="naver_id_login"></div>
+<div id="kakao_id_login"></div>
+<div id="custom-login-container"></div>
+
+<a id="custom-login-btn">
+    <img src="https://developers.kakao.com/tool/resource/static/img/button/login/full/ko/kakao_login_medium_narrow.png"/>
+</a>
+
+<a id="trend-link" href="https://doja-99.github.io/web-test/searchpage">비로그인 트렌드 찾기</a>
+
+<script type="text/javascript" src="https://static.nid.naver.com/js/naverLogin_implicit-1.0.3.js" charset="utf-8"></script>
+<script type="text/javascript" src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+<script type="text/javascript">
+        // 네이버 로그인
+        var naver_id_login = new naver_id_login("gzZpz9Fadj2Uonr78Fnn", "http://oauth/server");
+        var state = naver_id_login.getUniqState();
+        naver_id_login.setButton("green", 3, 40);
+        naver_id_login.setDomain("YOUR_SERVICE_URL");
+        naver_id_login.setState(state);
+        naver_id_login.setPopup();
+        naver_id_login.init_naver_id_login();
+
+        // 카카오 로그인
+        Kakao.init("YOUR_KAKAO_CLIENT_ID");
+        document.getElementById('custom-login-btn').addEventListener('click', function() {
+            Kakao.Auth.loginForm({
+                success: function(authObj) {
+                    alert('카카오 로그인 성공!\n사용자 아이디: ' + authObj.id);
+                    // 여기서 웹사이트에 로그인 처리를 할 수 있습니다.
+                },
+                fail: function(err) {
+                    alert('카카오 로그인 실패: ' + err.error);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
