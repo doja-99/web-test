@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- 문서의 문자 인코딩 및 뷰포트 설정 -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Chart.js 라이브러리를 가져옴 -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- 스타일 설정 시작 -->
+  <style>
+    /* 전체 문서 스타일 설정 */
+
+    /* 전체 문서의 글꼴을 Arial, sans-serif로 설정 */
+    body { font-family: Arial, sans-serif; text-align: center; }
+
+    /* 문서 제목(h1)의 상단 여백을 20px로 설정 */
+    h1 { margin-top: 20px; }
+
+    /* 텍스트 입력 필드의 내부 여백을 5px로 설정 */
+    input[type="text"] { padding: 5px; }
+
+    /* 버튼 요소의 내부 여백을 5px 위쪽, 10px 좌우로 설정 */
+    button { padding: 5px 10px; }
+
+    /* 블로그, 뉴스, 유튜브 컨테이너의 상단 여백을 20px로 설정 및 텍스트를 왼쪽으로 정렬 */
+    #blogContainer, #newsContainer, #youtubeContainer { margin-top: 20px; text-align: left; }
+
+    /* 차트 컨테이너의 스타일을 설정 */
+    .chart-container {
+      /* 인라인 블록 요소로 배치하며 컨테이너 간의 여백을 10px로 설정 */
+      display: inline-block;
+      margin: 10px;
+    }
+
+    /* 차트 캔버스 요소의 최대 너비를 200px로 제한 */
+    .chart-canvas { max-width: 200px; }
+
+  </style>
+  <!-- 스타일 설정 끝 -->
+
+  <!-- 문서 제목 설정 -->
+  <title>검색 페이지</title>
+</head>
+<body>
+<!-- 문서 제목(h1) 출력 -->
+<h1>Trend Now</h1>
+
+<!-- 메인 페이지로 가는 버튼 -->
+<a id="trend-link" href="https://doja-99.github.io/web-test/mainpage">
+    <button id="mainPageBtn">다른 키워드 검색</button></a>
+
+<!-- 키워드 입력 필드 및 검색 버튼 -->
+<input type="text" id="keyword" placeholder="키워드를 입력하세요.">
+<button id="searchBtn">검색</button>
+<button id="interestKeyword">관심 키워드 목록</button> <!-- 버튼 수정 필요-->
+
+<!-- 차트를 표시할 컨테이너 -->
+<div id="chartContainer">
+
+  <!-- 검색어통계 검색수 라인 차트 -->
+  <div class="chart-container">
+    <canvas id="searchChart" width="200" height="200"></canvas>
+  </div>
+
+  <!-- 쇼핑인사이트클릭량 라인 차트 -->
+  <div class="chart-container">
+    <canvas id="clicksChart" width="200" height="200"></canvas>
+  </div>
+
+  <!-- 쇼핑인사 성별 비율 도넛 차트 -->
+  <div class="chart-container">
+    <canvas id="genderChart" width="200" height="200"></canvas>
+  </div>
+
+  <!-- 쇼핑인사 연령대 비율 막대 차트 -->
+  <div class="chart-container">
+    <canvas id="ageChart" width="200" height="200"></canvas>
+  </div>
+
+  <!-- 블로그, 뉴스, 유튜브 검색 결과를 담을 컨테이너 -->
+  <div class="search-result-container" id="blogContainer"></div>
+  <div class="search-result-container" id="newsContainer"></div>
+  <div class="search-result-container" id="youtubeContainer"></div>
+</div>
+
+<!-- 스크립트 시작 -->
+<script>
+  // 검색 버튼 클릭 이벤트 핸들러
+  document.getElementById('searchBtn').addEventListener('click', async () => {
+    // 검색어를 가져옴
+    const keyword = document.getElementById('keyword').value;
+
+    // 검색어가 입력되지 않으면 검색을 눌러도 반응없음
+    if (!keyword) return;
+
+    // 임시로 사용할 데이터 (어떻게 표시할건지 미정? 일간 월간 & 최근1년 or 1달 )
+    const searchData = {
+      labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+      datasets: [{
+        label: '검색량',
+        data: [100, 200, 300, 250, 180, 10, 140, 210, 40, 70, 320, 200],
+        borderColor: '#FF6384',
+        fill: false
+      }]
+    };
+
+    const clicksData = {
+      labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+      datasets: [{
+        label: '클릭량',
+        data: [100, 200, 300, 250, 180, 10, 140, 210, 40, 70, 320, 200],
+        borderColor: '#FF6384',
+        fill: false
+      }]
+    };
+
+    const genderData = {
+      labels: ['남성', '여성'],
+      datasets: [{
+        data: [60, 40],
+        backgroundColor: ['#36A2EB', '#FFCE56']
+      }]
+    };
+
+    const ageData = {
+      labels: ['10대', '20대', '30대', '40대', '50대 이상'],
+      datasets: [{
+        label: '연령별',
+        data: [10, 25, 30, 20, 15],
+        backgroundColor: '#36A2EB'
+      }]
+    };
+
+    // 차트 생성 및 데이터 설정
+    var searchCtx = document.getElementById('searchChart').getContext('2d');
+    var searchChart = new Chart(searchCtx, {
+      type: 'line',
+      data: searchData,
+      options: { maintainAspectRatio: false }
+    });
+
+    var clicksCtx = document.getElementById('clicksChart').getContext('2d');
+    var clicksChart = new Chart(clicksCtx, {
+      type: 'line',
+      data: clicksData,
+      options: { maintainAspectRatio: false }
+    });
+
+    var genderCtx = document.getElementById('genderChart').getContext('2d');
+    var genderChart = new Chart(genderCtx, {
+      type: 'doughnut',
+      data: genderData,
+      options: { maintainAspectRatio: false }
+    });
+
+    var ageCtx = document.getElementById('ageChart').getContext('2d');
+    var ageChart = new Chart(ageCtx, {
+      type: 'bar',
+      data: ageData,
+      options: { maintainAspectRatio: false }
+    });
+  });
+
+  // 블로그, 뉴스, 유튜브 검색 결과를 담을 컨테이너의 ID 목록
+  const containers = { blog: 'blogContainer', news: 'newsContainer', youtube: 'youtubeContainer' };
+
+  // 검색 버튼 클릭 이벤트 핸들러
+  document.getElementById('searchBtn').addEventListener('click', async () => {
+    // 각 검색 결과 컨테이너를 비움 이 코드가 없으면 결과가 누적됨
+    Object.values(containers).forEach(containerId => document.getElementById(containerId).innerHTML = '');
+
+    // 검색어를 가져옴
+    const keyword = document.getElementById('keyword').value;
+    if (!keyword) return;
+
+    // 첫줄은 테스트하려고 넣은 임시데이터이며 실제론 api를 넣어야함
+    const data = {
+      blog: [
+        { title: '블로그 글 제목 1', link: 'https://blog.naver.com/yoosg900' },
+        { title: '블로그 글 제목 2', link: 'https://example.com/blog2' },
+        { title: '블로그 글 제목 3', link: 'https://example.com/blog3' }
+      ],
+      news: [
+        { title: '뉴스 제목 1', url: 'https://imnews.imbc.com/news/2023/world/article/6512809_36133.html' },
+        { title: '뉴스 제목 2', url: 'https://example.com/news2' },
+        { title: '뉴스 제목 3', url: 'https://example.com/news3' }
+      ],
+      youtube: [
+        { title: '유튜브 영상 제목 1', videoId: '3uQNYPMVF0Q' },
+        { title: '유튜브 영상 제목 2', videoId: 'VIDEO_ID_2' },
+        { title: '유튜브 영상 제목 3', videoId: 'VIDEO_ID_3' }
+      ]
+    };
+
+    // 검색 결과를 각 컨테이너에 표시
+    Object.entries(data).forEach(([type, items]) => {
+      const list = document.createElement('ul');
+      items.slice(0, 3).forEach(item => {
+        const listItem = document.createElement('li');
+        const link = type === 'youtube' ? `https://www.youtube.com/watch?v=${item.videoId}` : item.link || item.url;
+        listItem.innerHTML = `<a href="${link}" target="_blank">${item.title}</a>`;
+        list.appendChild(listItem);
+      });
+      document.getElementById(containers[type]).appendChild(list);
+    });
+  });
+
+  // 메인 페이지로 가는 버튼 클릭 이벤트 핸들러
+  document.getElementById('mainPageBtn').addEventListener('click', () => {
+    // 메인 페이지로 이동하는 코드 추가
+    window.location.href = "https://doja-99.github.io/web-test/mainpage"; // 메인 페이지의 URL로 변경해야 함
+  });
+</script>
+
+</body>
+</html>
