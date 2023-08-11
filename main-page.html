@@ -25,7 +25,8 @@
     button { padding: 5px 10px; }
 
     /* 블로그, 뉴스, 유튜브 컨테이너의 상단 여백을 20px로 설정 및 텍스트를 왼쪽으로 정렬 */
-    #blogContainer, #newsContainer, #youtubeContainer { margin-top: 20px; text-align: left; }
+    #blogContainer, #newsContainer, #youtubeContainer, #naverBlog, #naverNews, #youtube
+     { margin-top: 20px; text-align: left; }
 
     /* 차트 컨테이너의 스타일을 설정 */
     .chart-container {
@@ -91,20 +92,28 @@
 <!-- 문서 제목(h1) 출력 -->
 <h1>Trend Now</h1>
 
+<a id="login-link" href="index.html">
+    <button id="loginPageBtn">로그인가보자고~</button></a>
+
 <!-- 메인 페이지로 가는 버튼 -->
-<a id="trend-link" href="https://doja-99.github.io/web-test/mainpage">
+<a id="mainPage-link" href="main-page.html">
     <button id="mainPageBtn">다른 키워드 검색</button></a>
 
 <!-- 키워드 입력 필드 및 검색 버튼 -->
 <input type="text" id="keyword" placeholder="키워드를 입력하세요.">
 <button id="searchBtn">검색</button>
-<button id="interestKeyword">관심 키워드 목록</button> <!-- 버튼 수정 필요-->
+
+<a id="interestKeyWord-link" href="interest-keyword.html">
+<button id="interestKeyword">관심 키워드 목록</button></a> <!-- 버튼 수정 필요-->
+                                   <!-- 게시판 주소 넣으면 됩니다 -->
+<a id="board-link" href="board.html">
+<button id="board">게시판</button></a>
 
 <div class="search-container">
     <form class="search-form">
         <div class="search-field">
             <label class="search-label">분야</label>
-            <select class="search-input">
+            <select class="search-input" name="category">
                 <option value="fashion">전체</option>
                 <!-- 다른 옵션 추가 -->
             </select>
@@ -117,10 +126,10 @@
         <!--    </div>-->
         <div class="search-field">
             <label class="search-label">기간</label>
-            <select class="search-input">
-                <option value="1">1개월</option>
-                <option value="3">3개월</option>
-                <option value="12">1년</option>
+            <select class="search-input" name="period">
+                <option value="1">일간</option>
+                <option value="7">주간</option>
+                <option value="30">월간</option>
                 <option value="custom">직접입력</option>
             </select>
             <!-- 년, 월, 일을 선택하는 select 요소로 변경 -->
@@ -155,7 +164,7 @@
 
             <select class="search-input day-select">
                 <option value="">일(dd)</option>
-                <!-- 다른 일 옵션 추가 -->
+                <!-- 자바 스크립트 반복문으로 생성 -->
             </select>
 
             <span>~</span>
@@ -190,32 +199,32 @@
 
             <select class="search-input day-select">
                 <option value="">일(dd)</option>
-                <!-- 다른 일 옵션 추가 -->
+                <!-- 자바스크립트 반복문으로 생성 -->
             </select>
         </div>
-        <!--기기별 코드입니다 지우셔도 됩니다 일단 넣었어요    -->
+        <!--기기별 차트코드입니다 지우셔도 됩니다 일단 넣었어요    -->
         <div class="search-field">
             <label class="search-label">기기별</label>
-            <select class="search-input">
+            <select class="search-input" name="device">
                 <option value="all">전체</option>
                 <option value="pc">PC</option>
                 <option value="mobile">모바일</option>
                 <!-- 다른 옵션 추가 -->
             </select>
         </div>
-
+                     <!-- 성별 차트 -->
         <div class="search-field">
             <label class="search-label">성별</label>
-            <select class="search-input">
+            <select class="search-input" name="gender">
                 <option value="all">전체</option>
                 <option value="female">여성</option>
                 <option value="male">남성</option>
             </select>
         </div>
-
+                      <!-- 나이 차트 -->
         <div class="search-field">
-            <label class="search-label">연령</label>
-            <select class="search-input">
+            <label class="search-label">나이</label>
+            <select class="search-input" name="age">
                 <option value="all">전체</option>
                 <option value="10-19">10대</option>
                 <option value="20-29">20대</option>
@@ -225,9 +234,7 @@
                 <!-- 다른 옵션 추가 -->
             </select>
         </div>
-
         <button class="search-button">조회</button>
-
     </form>
 </div>
 
@@ -254,11 +261,15 @@
         <canvas id="ageChart" width="200" height="200"></canvas>
     </div>
 
-    <!-- 블로그, 뉴스, 유튜브 검색 결과를 담을 컨테이너 -->
-    <div class="search-result-container" id="blogContainer"></div>
-    <div class="search-result-container" id="newsContainer"></div>
-    <div class="search-result-container" id="youtubeContainer"></div>
 </div>
+
+    <!-- 블로그, 뉴스, 유튜브 검색 결과를 담을 컨테이너 -->
+    <div id="naverBlog"><p>네이버 블로그</p> </div>
+    <div class="search-result-container" id="blogContainer"></div>
+    <div id="naverNews"><p>네이버 뉴스</p> </div>
+    <div class="search-result-container" id="newsContainer"></div>
+    <div id="youtube"><p>유튜브 동영상</p> </div>
+    <div class="search-result-container" id="youtubeContainer"></div>
 
 <!-- 스크립트 시작 -->
 <script>
@@ -300,7 +311,7 @@
     // 검색어가 입력되지 않으면 검색을 눌러도 반응없음
     if (!keyword) return;
 
-    // 임시로 사용할 데이터 (어떻게 표시할건지 미정? 일간 월간 & 최근1년 or 1달 )
+    // 임시로 사용할 데이터를 넣었습니다
     const searchData = {
       labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
       datasets: [{
